@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="custom_capacitors"
+version="1.0.0"
+displayName="EnderIO Custom Capacitors"
+authors="Zulu"
+description='''Adds custom capacitors to EnderIO with config support.'''
+
+[[dependencies.custom_capacitors]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.custom_capacitors]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.custom_capacitors]]
+    modId="enderio"
+    mandatory=true
+    versionRange="[6.0.0,)"
+    ordering="AFTER"
+    side="BOTH"

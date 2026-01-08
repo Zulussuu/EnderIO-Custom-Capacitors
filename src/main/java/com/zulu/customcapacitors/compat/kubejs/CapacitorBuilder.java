@@ -1,31 +1,49 @@
 package com.zulu.customcapacitors.compat.kubejs;
 
 import com.zulu.customcapacitors.CustomCapacitors;
-import com.zulu.customcapacitors.component.ModDataComponents;
-import com.enderio.base.api.capacitor.CapacitorData;
+import com.zulu.customcapacitors.capacitor.SimpleCapacitorData;
+import com.enderio.api.capability.IMultiCapabilityItem;
+import com.enderio.api.capability.MultiCapabilityProvider;
+import com.enderio.api.capacitor.ICapacitorData;
+import com.enderio.base.common.init.EIOCapabilities;
+import com.enderio.base.common.item.capacitors.BaseCapacitorItem;
 import dev.latvian.mods.kubejs.item.ItemBuilder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import java.util.Map;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.Nullable;
 
 public class CapacitorBuilder extends ItemBuilder {
-    public int lvl = 1;
+    public float level = 1;
     public boolean glow = false;
+    public int color = 0xFFFFFF;
+    public String capName = null;
 
     public CapacitorBuilder(ResourceLocation id) {
-        super(ResourceLocation.fromNamespaceAndPath(CustomCapacitors.MOD_ID, id.getPath()));
+        super(new ResourceLocation(CustomCapacitors.MOD_ID, id.getPath()));
         maxStackSize(64);
     }
 
-    public CapacitorBuilder level(int l) {
-        lvl = l;
+    public CapacitorBuilder level(float l) {
+        level = l;
         return this;
     }
 
     public CapacitorBuilder glowing(boolean g) {
         glow = g;
-        this.glow = g;
+        return this;
+    }
+
+    public CapacitorBuilder color(int c) {
+        color = c;
+        return this;
+    }
+
+    public CapacitorBuilder capName(String name) {
+        capName = name;
         return this;
     }
 
@@ -34,20 +52,26 @@ public class CapacitorBuilder extends ItemBuilder {
         return new CapItem(this);
     }
 
-    public static class CapItem extends Item {
+    public static class CapItem extends BaseCapacitorItem implements IMultiCapabilityItem {
         private final CapacitorBuilder b;
-        private final CapacitorData data;
+        private final ICapacitorData data;
 
         public CapItem(CapacitorBuilder b) {
             super(b.createItemProperties());
             this.b = b;
-            this.data = new CapacitorData(b.lvl, Map.of());
+            this.data = new SimpleCapacitorData(b.level);
+        }
+
+        @Nullable
+        @Override
+        public MultiCapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt, MultiCapabilityProvider provider) {
+            provider.add(EIOCapabilities.CAPACITOR, LazyOptional.of(() -> data));
+            return provider;
         }
 
         @Override
-        public void verifyComponentsAfterLoad(ItemStack s) {
-            if (s.get(ModDataComponents.CAPACITOR_DATA.get()) == null)
-                s.set(ModDataComponents.CAPACITOR_DATA.get(), data);
+        public Component getName(ItemStack stack) {
+            return b.capName != null ? Component.literal(b.capName) : super.getName(stack);
         }
 
         @Override
@@ -55,8 +79,12 @@ public class CapacitorBuilder extends ItemBuilder {
             return b.glow;
         }
 
-        public CapacitorData getData() {
+        public ICapacitorData getData() {
             return data;
+        }
+
+        public int getColor() {
+            return b.color;
         }
     }
 }

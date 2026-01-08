@@ -4,17 +4,17 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.Config;
 import com.zulu.customcapacitors.CustomCapacitors;
 import com.zulu.customcapacitors.item.EnergyCapacitorItem;
-import com.enderio.base.api.capacitor.CapacitorData;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+
 import java.nio.file.*;
 import java.util.*;
 
 public class ConfigLoader {
     private static final Path CFG = Paths.get("config/custom_capacitors.toml");
     private static final List<CapData> DATA = new ArrayList<>();
-    private static final Map<String, DeferredHolder<Item, EnergyCapacitorItem>> ITEMS = new HashMap<>();
+    private static final Map<String, RegistryObject<EnergyCapacitorItem>> ITEMS = new HashMap<>();
 
     public record CapData(String id, String name, float level, boolean glow, int color) {
     }
@@ -100,12 +100,11 @@ public class ConfigLoader {
     public static void register(DeferredRegister<Item> reg) {
         for (CapData d : DATA) {
             ITEMS.put(d.id, reg.register(d.id, () -> new EnergyCapacitorItem(
-                    new Item.Properties().stacksTo(64), new CapacitorData(d.level, Map.of()), d.name, d.glow,
-                    d.color)));
+                    new Item.Properties().stacksTo(64), d.level, d.name, d.glow, d.color)));
         }
     }
 
-    public static Collection<DeferredHolder<Item, EnergyCapacitorItem>> getItems() {
+    public static Collection<RegistryObject<EnergyCapacitorItem>> getItems() {
         return ITEMS.values();
     }
 

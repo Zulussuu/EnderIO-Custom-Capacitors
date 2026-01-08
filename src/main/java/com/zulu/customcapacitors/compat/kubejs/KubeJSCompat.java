@@ -1,15 +1,14 @@
 package com.zulu.customcapacitors.compat.kubejs;
 
 import com.zulu.customcapacitors.CustomCapacitors;
-import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
-import dev.latvian.mods.kubejs.registry.BuilderTypeRegistry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.registry.RegistryInfo;
 
-public class KubeJSCompat implements KubeJSPlugin {
+public class KubeJSCompat extends KubeJSPlugin {
+    
     @Override
-    public void registerBuilderTypes(BuilderTypeRegistry reg) {
-        reg.of(Registries.ITEM, r -> r.add(ResourceLocation.fromNamespaceAndPath(CustomCapacitors.MOD_ID, "capacitor"),
-                CapacitorBuilder.class, CapacitorBuilder::new));
+    public void initStartup() {
+        RegistryInfo.ITEM.addType(CustomCapacitors.MOD_ID + ":capacitor", CapacitorBuilder.class, CapacitorBuilder::new);
+        CustomCapacitors.LOGGER.info("[CustomCapacitors] KubeJS integration loaded!");
     }
 }

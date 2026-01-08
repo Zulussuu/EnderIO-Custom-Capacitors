@@ -1,10 +1,9 @@
 package com.zulu.customcapacitors;
 
-import com.zulu.customcapacitors.compat.GuideMeCompat;
-import com.zulu.customcapacitors.component.ModDataComponents;
 import com.zulu.customcapacitors.item.ModItems;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +12,11 @@ public class CustomCapacitors {
     public static final String MOD_ID = "custom_capacitors";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public CustomCapacitors(IEventBus bus) {
-        ModDataComponents.register(bus);
+    @SuppressWarnings("removal")
+    public CustomCapacitors() {
+        LOGGER.info("[CustomCapacitors] Initializing...");
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.register(bus);
-
-        GuideMeCompat.init();
+        LOGGER.info("[CustomCapacitors] Mod initialized successfully!");
     }
 }
